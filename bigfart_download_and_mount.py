@@ -16,13 +16,13 @@ savenum = '0'
 
 
 def ohnoes_errorhappend(theerror):
+    try: ftp.close()
+    except: pass 
     import winsound
     duration = 1000  # milliseconds
     freq = 440  # Hz
     winsound.Beep(freq, duration)
     input(theerror +'\nyeah an error happend')
-    try: ftp.close()
-    except: pass 
     sys.exit()
 
 
@@ -83,7 +83,7 @@ bigfart_ftp_dir = ''
 
 
 try:
-
+    ftp = ftp_loginANDconnect(HOST,PORT)
     for dirrr in list_all_files_in_folder_ftp(ftp,f"/mnt/sandbox/NPXS20001_000/savedata{savenum}"):
         if dirrr.split("/")[-1].startswith("bigfart"):
             bigfart_ftp_dir = dirrr
@@ -95,6 +95,11 @@ try:
     except IndexError: dothedownload = True
     
     if dothedownload: ftpdownload(ftp,bigfart_ftp_dir,f"/mnt/sandbox/NPXS20001_000/savedata{savenum}",bigfart_ftp_dir.split("/")[-1])
-    else: ftpupload(ftp,bigfart_ftp_dir.split("/")[-1],f"/mnt/sandbox/NPXS20001_000/savedata{savenum}",user_bigfart)
+    else: 
+        aaa = bigfart_ftp_dir.split('/')# getting the dir, remove the bigfart file at the end
+        if not aaa[-1]: aaa.pop(-1); aaa.pop(-1)
+        else: aaa.pop(-1)
+        ee = '/'.join(aaa)
+        ftpupload(ftp,bigfart_ftp_dir.split("/")[-1],ee,user_bigfart)
     ftp.close()
 except Exception: ohnoes_errorhappend(traceback.format_exc())
